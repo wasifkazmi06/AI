@@ -3,6 +3,7 @@ Configuration file for test data
 """
 
 class TestData:
+    # UI Test Data
     # User Data
     TEST_MOBILE_NUMBER = "7057031852"
     TENANT_ID = "ec35b493"
@@ -28,3 +29,34 @@ class TestData:
             'business_name': 'test_1'
         }
     }
+
+    # API Test Data
+    class LibraryAPI:
+        # Request Data
+        ADD_BOOK = {
+            "name": "AI Automation 101",
+            "aisle": "227",
+            "author": "John foe"
+        }
+        
+        DELETE_BOOK = {
+            "ID": "33b4e746-c652-4266-aab7-7c8a5f203eee228"
+        }
+        
+        # Query Parameters
+        AUTHOR_NAME = "Author101"
+        BOOK_ID = "1647127e-b77f-4827-b986-592301ef7068228"
+        
+        # Expected Response Messages
+        ADD_BOOK_SUCCESS = "Add Book operation success"
+        DELETE_BOOK_SUCCESS = "book is successfully deleted"
+        BOOK_NOT_FOUND = "The book by requested bookid is not available"
+        
+        # Response Fields
+        RESPONSE_FIELDS = {
+            'MSG': 'Msg',
+            'MESSAGE': 'msg',
+            'BOOK_NAME': 'book_name',
+            'AUTHOR': 'author',
+            'ID': 'ID'
+        }

@@ -1,0 +1,127 @@
+{
+	"info": {
+		"_postman_id": "ae03d6bb-95de-4c51-98dd-9a1706aec629",
+		"name": "AI_API_Automation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "1661828",
+		"_collection_link": "https://payulpqa.postman.co/workspace/My-Workspace~493105ec-a969-4454-8440-efe6ef165d2b/collection/1661828-ae03d6bb-95de-4c51-98dd-9a1706aec629?action=share&source=collection_link&creator=1661828"
+	},
+	"item": [
+		{
+			"name": "AddBook",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"AI Automation 101\",\n    \"isbn\": \"{{$guid}}\",\n    \"aisle\": \"227\",\n    \"author\": \"John foe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://216.10.245.166/Library/Addbook.php"
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteBook",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ID\": \"33b4e746-c652-4266-aab7-7c8a5f203eee228\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://216.10.245.166/Library/DeleteBook.php"
+			},
+			"response": []
+		},
+		{
+			"name": "GetBookAuthorName",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"AI Automation 101\",\n    \"isbn\": \"{{$guid}}\",\n    \"aisle\": \"227\",\n    \"author\": \"John foe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://216.10.245.166/Library/GetBook.php?AuthorName=Author101",
+					"protocol": "http",
+					"host": [
+						"216",
+						"10",
+						"245",
+						"166"
+					],
+					"path": [
+						"Library",
+						"GetBook.php"
+					],
+					"query": [
+						{
+							"key": "AuthorName",
+							"value": "Author101"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetBookID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"AI Automation 101\",\n    \"isbn\": \"{{$guid}}\",\n    \"aisle\": \"227\",\n    \"author\": \"John foe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://216.10.245.166/Library/GetBook.php?ID=1647127e-b77f-4827-b986-592301ef7068228",
+					"protocol": "http",
+					"host": [
+						"216",
+						"10",
+						"245",
+						"166"
+					],
+					"path": [
+						"Library",
+						"GetBook.php"
+					],
+					"query": [
+						{
+							"key": "ID",
+							"value": "1647127e-b77f-4827-b986-592301ef7068228"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
