@@ -48,9 +48,9 @@ class TestData:
         BOOK_ID = "1647127e-b77f-4827-b986-592301ef7068228"
         
         # Expected Response Messages
-        ADD_BOOK_SUCCESS = "Add Book operation success"
+        ADD_BOOK_SUCCESS = "successfully added"
         DELETE_BOOK_SUCCESS = "book is successfully deleted"
-        BOOK_NOT_FOUND = "The book by requested bookid is not available"
+        BOOK_NOT_FOUND = "The book by requested bookid / author name does not exists!"
         
         # Response Fields
         RESPONSE_FIELDS = {

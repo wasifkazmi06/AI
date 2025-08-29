@@ -9,8 +9,8 @@ import uuid
 class LibraryAPI:
     def __init__(self):
         self.http_client = HttpClient()
-        self.urls = urls.UrlConfig()
-        self.test_data = test_data.TestData()
+        self.urls = urls
+        self.test_data = test_data
 
     def add_book(self, name: str, aisle: str, author: str) -> Dict:
         """
@@ -39,18 +39,23 @@ class LibraryAPI:
             API response
         """
         params = {"AuthorName": author_name}
-        return self.http_client.get(self.urls.GET_BOOK_ENDPOINT, params=params)
+        return self.http_client.get(self.urls.GET_BOOK_URL, params=params)
 
-    def get_book_by_id(self, book_id: str) -> Dict:
+    def get_book_by_id(self, book_id: str, handle_404: bool = False) -> Dict:
         """
         Get book by ID
         Args:
             book_id: ID of the book
+            handle_404: If True, handle 404 responses without raising exception
         Returns:
-            API response
+            API response with status_code when handle_404=True
         """
         params = {"ID": book_id}
-        return self.http_client.get(self.urls.GET_BOOK_ENDPOINT, params=params)
+        return self.http_client.get(
+            self.urls.GET_BOOK_URL, 
+            params=params,
+            handle_404=handle_404
+        )
 
     def delete_book(self, book_id: str) -> Dict:
         """
@@ -61,4 +66,4 @@ class LibraryAPI:
             API response
         """
         payload = {"ID": book_id}
-        return self.http_client.delete(self.urls.DELETE_BOOK_ENDPOINT, payload)
+        return self.http_client.post(self.urls.DELETE_BOOK_URL, payload)

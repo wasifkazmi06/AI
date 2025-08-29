@@ -32,17 +32,18 @@ class HttpClient:
             raise Exception(f"POST request failed: {str(e)}")
 
     @staticmethod
-    def get(url: str, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> Dict[str, Any]:
+    def get(url: str, params: Optional[Dict] = None, headers: Optional[Dict] = None, handle_404: bool = False) -> Dict[str, Any]:
         """
         Make a GET request
         Args:
             url: The endpoint URL
             params: Optional query parameters
             headers: Optional request headers
+            handle_404: If True, don't raise exception for 404 responses
         Returns:
-            Dict containing the response data
+            Dict containing the response data and status code
         Raises:
-            Exception if request fails
+            Exception if request fails (except 404 when handle_404=True)
         """
         try:
             default_headers = {'Content-Type': 'application/json'}
@@ -50,9 +51,22 @@ class HttpClient:
                 default_headers.update(headers)
             
             response = requests.get(url, params=params, headers=default_headers)
+            
+            # Handle 404 specially if requested
+            if handle_404 and response.status_code == 404:
+                return {
+                    'status_code': 404,
+                    'msg': response.json().get('msg', 'Not Found'),
+                }
+            
             response.raise_for_status()
             return response.json()
         except RequestException as e:
+            if handle_404 and '404' in str(e):
+                return {
+                    'status_code': 404,
+                    'msg': 'Not Found'
+                }
             raise Exception(f"GET request failed: {str(e)}")
 
     @staticmethod
