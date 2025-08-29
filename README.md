@@ -133,7 +133,3 @@ Tests run in headed mode by default. Configuration is in `conftest.py`.
 - Keep configurations in config files
 - Handle cleanup in test fixtures
 - Use type hints for better code quality
-
-## License
-
-This project is licensed under the MIT License.
