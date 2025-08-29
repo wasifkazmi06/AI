@@ -1,0 +1,5 @@
+pytest>=7.0.0
+pytest-playwright>=0.4.0
+playwright>=1.39.0
+requests>=2.31.0
+mysql-connector-python>=8.0.0
