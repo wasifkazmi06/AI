@@ -1,0 +1,35 @@
+Multiplying 12 by 3.14 involves a straightforward calculation. I'll guide you through the steps:
+
+1. **Understand the Problem:**
+   - You have two numbers, 12 (which can represent 12 units of something) and 3.14 (which could be a numerical constant like π approximated to two decimal places).
+   - You need to multiply these two numbers.
+
+2. **Set Up the Calculation:**
+   \[
+12 \times 3.14
+\]
+
+3. **Perform the Multiplication:**
+   - We multiply 12 by 3.14:
+
+   Step-by-step calculation:
+   \[
+12 \times 3.14 = (12 \times 3) + (12 \times 0.14)
+   \]
+
+   \[
+12 \times 3 = 36
+   \]
+
+   \[
+12 \times 0.14 = 1.68
+   \]
+
+4. **Add the Results:**
+   \[
+36 + 1.68 = 37.68
+   \]
+
+So, \( 12 \times 3.14 = 37.68 \).
+
+If you need further explanations or practice materials, just let me know!

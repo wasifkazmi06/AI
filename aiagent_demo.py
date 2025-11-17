@@ -9,20 +9,22 @@ from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_agentchat.messages import MultiModalMessage
 from autogen_agentchat.conditions import MaxMessageTermination, TextMentionTermination
 from autogen_agentchat.teams import RoundRobinGroupChat, SelectorGroupChat
+from autogen_ext.agents.web_surfer import MultimodalWebSurfer
+from autogen_ext.tools.mcp import StdioServerParams, mcp_server_tools
 
 os.environ[
-    "OPENAI_API_KEY"] = "dummytoken"
+    "OPENAI_API_KEY"] = "dummy token for testing purposes"
 
 async def single_agent():
 
-    model_client = OpenAIChatCompletionClient(model="gpt-5")
+    model_client = OpenAIChatCompletionClient(model="gpt-4o-mini")
     assistant = AssistantAgent(name="assistant", model_client=model_client)
     await Console(assistant.run_stream(task="What is 25 * 8?"))
     await model_client.close()
 
 async def single_multimodal_agent():
 
-    model_client = OpenAIChatCompletionClient(model="gpt-5")
+    model_client = OpenAIChatCompletionClient(model="gpt-4o-mini")
     assistant = AssistantAgent(name="assistant", model_client=model_client)
     image = Image.from_file("C:\\Users\\wasif.kazmi\\Github\\AI\\Janet.jpg")
     multimodal_message = MultiModalMessage(
@@ -32,7 +34,7 @@ async def single_multimodal_agent():
 
 async def round_robin_group_chat_agent():
 
-    model_client = OpenAIChatCompletionClient(model="gpt-5")
+    model_client = OpenAIChatCompletionClient(model="gpt-4o-mini")
     agent1 = AssistantAgent(name="MathTeacher", model_client=model_client,
                              system_message="You are a math teacher. Explain concepts clearly and ask follow-up questions")
     agent2 = AssistantAgent(name="Student", model_client=model_client,
@@ -44,7 +46,7 @@ async def round_robin_group_chat_agent():
 
 async def human_agent():
 
-    model_client = OpenAIChatCompletionClient(model="gpt-5")
+    model_client = OpenAIChatCompletionClient(model="gpt-4o-mini")
     assistant = AssistantAgent(name="MathTutor", model_client=model_client,
                                 system_message="You are helpful math tutor. Help the user solve math problems step by step. When the user says 'THANKS DONE' or similar, acknowledge and say 'LESSON COMPLETE' to end session.")
     user_proxy = UserProxyAgent(name="Student")
@@ -53,7 +55,7 @@ async def human_agent():
 
 async def state_saved_agent():
 
-    model_client = OpenAIChatCompletionClient(model="gpt-5")
+    model_client = OpenAIChatCompletionClient(model="gpt-4o-mini")
     agent1 = AssistantAgent(name="Helper", model_client=model_client)
     agent2 = AssistantAgent(name="BackupHelper", model_client=model_client)
     await Console(agent1.run_stream(task="My favourite color is green because it reminds me of nature."))
@@ -68,7 +70,7 @@ async def state_saved_agent():
 
 async def selector_group_chat_agent():
 
-    model_client = OpenAIChatCompletionClient(model="gpt-5")
+    model_client = OpenAIChatCompletionClient(model="gpt-4o-mini")
     researcher = AssistantAgent(
         "ResearcherAgent",
         model_client=model_client,
@@ -90,5 +92,38 @@ async def selector_group_chat_agent():
     await Console(team.run_stream(task ="Research on who is a better ODI batsman between Virat Kohli and Steve Smith, write an article on it, and provide critique on the article."))
     await model_client.close()
 
+async def web_surfer_agent():
 
-asyncio.run(selector_group_chat_agent())
+    model_client = OpenAIChatCompletionClient(model="gpt-4o-mini")
+    web_agent = MultimodalWebSurfer(
+        name="WebSurfer",
+        model_client=model_client,
+        headless= False,
+        animate_actions=True)
+    agent_team = RoundRobinGroupChat(participants=[web_agent], max_turns=2)
+    await Console(agent_team.run_stream(task="Find the schedule of Indian cricket team till 2026 and list out the matches and venues. Save or print it as a table."))
+    await web_agent.close()
+    await model_client.close()
+
+async def mcp_server_tool_agent():
+    
+    filesystem_server_params = StdioServerParams(command="npx",
+                                                  args=[
+                                                        "-y", 
+                                                        "@modelcontextprotocol/server-filesystem",
+                                                        "C:\\Users\\wasif.kazmi"
+                                                        ],
+                                                  read_timeout_seconds=60)
+    model_client = OpenAIChatCompletionClient(model="gpt-4o")
+    # Get tools from the workbench
+    tools = await mcp_server_tools(filesystem_server_params)
+    math_tutor = AssistantAgent(name="MathTutor", model_client=model_client, tools=tools,
+                                    system_message="You are helpful math tutor. Help the user solve math problems step by step. You have access to file system tools. When the user says 'THANKS DONE' or similar, acknowledge and say 'LESSON COMPLETE' to end session.")
+    user_proxy = UserProxyAgent(name="Student")
+    team = RoundRobinGroupChat(participants=[user_proxy, math_tutor],
+        termination_condition=TextMentionTermination("LESSON COMPLETE"))
+    await Console(team.run_stream(task="I need help with algebra problem. Tutor, feel free to create files to help with student learning"))
+
+    await model_client.close()
+
+asyncio.run(mcp_server_tool_agent())
