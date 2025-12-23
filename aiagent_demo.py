@@ -13,7 +13,7 @@ from autogen_ext.agents.web_surfer import MultimodalWebSurfer
 from autogen_ext.tools.mcp import StdioServerParams, mcp_server_tools
 
 os.environ[
-    "OPENAI_API_KEY"] = "dummy token for testing purposes"
+    "OPENAI_API_KEY"] = "dummyKey"
 
 async def single_agent():
 
@@ -127,3 +127,4 @@ async def mcp_server_tool_agent():
     await model_client.close()
 
 asyncio.run(mcp_server_tool_agent())
+

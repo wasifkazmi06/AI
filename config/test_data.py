@@ -60,3 +60,13 @@ class TestData:
             'AUTHOR': 'author',
             'ID': 'ID'
         }
+
+    # Sauce Demo credentials for UI tests
+    SAUCE_USERNAME = "standard_user"
+    SAUCE_PASSWORD = "secret_sauce"
+
+    # Optionally expose the Sauce user as part of USERS map
+    USERS['sauce_standard_user'] = {
+        'username': SAUCE_USERNAME,
+        'password': SAUCE_PASSWORD
+    }

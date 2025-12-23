@@ -9,16 +9,69 @@ if str(ROOT) not in sys.path:
 
 import pytest
 from playwright.sync_api import Page, expect, sync_playwright, Browser, BrowserContext
-from typing import Dict, Generator
+from typing import Generator
 from config import urls as urls_config, test_data as test_data_config
 
+
+def pytest_addoption(parser: pytest.Parser) -> None:
+    """Add command-line option to select which browser to run tests with.
+    Accept both `--browser-name` (preferred) and `--browser_name` (alias) to
+     plugins (for example pytest-playwright) provide that option already and
+    defining it locally causes argparse conflicts.
+    """
+    parser.addoption(
+        "--browser-name",
+        "--browser_name",
+        action="store",
+        default="chromium",
+        choices=["chromium", "firefox", "webkit", "chrome", "msedge"],
+        help="Browser to run tests with: chromium, firefox, webkit, chrome, msedge",
+    )
+
+
 @pytest.fixture(scope="session")
-def browser() -> Generator[Browser, None, None]:
+def requested_browser_name(request) -> str:
+    """Fixture to get the requested browser name from command-line options."""
+    if hasattr(request, "param"):
+        return request.param
+
+    # Value as exposed by our option (may be the default)
+    val = request.config.getoption("browser_name")
+
+    return val
+
+
+@pytest.fixture(scope="session")
+def browser(requested_browser_name: str) -> Generator[Browser, None, None]:
     playwright = sync_playwright().start()
-    browser = playwright.chromium.launch(headless=False, slow_mo=1000)
+
+    # Small debug print to make it clear which browser was requested when
+    # running tests. This helps troubleshooting CLI/fixture conflicts.
+    print(f"[pytest] launching {requested_browser_name} browser for the session.")
+
+    bname = (requested_browser_name or "chromium").lower()
+    if bname in ("chromium", "chrome", "msedge"):
+        # Use chromium engine; allow channel override for real Chrome/MSEdge
+        # Run headless by default and don't slow down execution unless debugging.
+        launch_kwargs = {"headless":False, "slow_mo": 500}
+        if bname == "chrome":
+            browser = playwright.chromium.launch(channel="chrome", **launch_kwargs)
+        elif bname == "msedge":
+            browser = playwright.chromium.launch(channel="msedge", **launch_kwargs)
+        else:
+            browser = playwright.chromium.launch(**launch_kwargs)
+    elif bname == "firefox":
+        browser = playwright.firefox.launch(headless=False, slow_mo=500)
+    elif bname == "webkit":
+        browser = playwright.webkit.launch(headless=False, slow_mo=500)
+    else:
+        playwright.stop()
+        raise ValueError(f"Unsupported browser: {requested_browser_name}")
+
     yield browser
     browser.close()
     playwright.stop()
+
 
 @pytest.fixture(scope="function")
 def context(browser: Browser) -> Generator[BrowserContext, None, None]:
@@ -31,11 +84,13 @@ def context(browser: Browser) -> Generator[BrowserContext, None, None]:
     yield context
     context.close()
 
+
 @pytest.fixture(scope="function")
 def page(context: BrowserContext) -> Generator[Page, None, None]:
     page = context.new_page()
     yield page
     page.close()
+
 
 @pytest.fixture(scope="session")
 def url() -> callable:
@@ -80,3 +135,6 @@ def test_data_value() -> callable:
         raise AttributeError(f"Test data '{name}' not found in TestData")
 
     return _get
+
+
+# End of file

@@ -7,6 +7,7 @@ class UrlConfig:
         # UI Base URLs
         self.LAZYPAY_BASE_URL = "https://sandbox-web.lazypay.in"
         self.API_BASE_URL = "http://user-registration-sbox.internal.los.payufin.io"
+        self.SAUCE_DEMO_URL = "https://www.saucedemo.com/"
         
         # UI API Endpoints
         self.FETCH_OTP_ENDPOINT = f"{self.API_BASE_URL}/v0/user/fetchOtp"

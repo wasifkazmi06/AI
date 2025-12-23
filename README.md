@@ -92,6 +92,71 @@ pytest -v
 ### Run tests in headed mode:
 Tests run in headed mode by default. Configuration is in `conftest.py`.
 
+### Selecting browser to run tests
+
+The framework supports selecting which browser engine or channel to use via a pytest CLI option `--browser-name` (default: `chromium`).
+
+Examples:
+
+Run tests using Firefox:
+```bash
+pytest --browser-name=firefox
+```
+
+Run tests using WebKit:
+```bash
+pytest --browser-name=webkit
+```
+
+Run tests using Chrome:
+```bash
+pytest --browser-name=chrome
+```
+
+Run tests using Microsoft Edge:
+```bash
+pytest --browser-name=msedge
+```
+
+The `--browser-name` option is case-insensitive and supports the following values:
+- `chromium` (default)
+- `firefox`
+- `webkit`
+- `chrome`
+- `msedge`
+
+If no browser is specified, the framework defaults to `chromium`. Ensure the required browser is installed via Playwright before running tests.
+
+Notes:
+- `chrome` and `msedge` use Playwright's Chromium engine but launch the installed Chrome or Edge browser via the `channel` option; those channels must be installed on the host machine.
+- If you get channel-related errors try `chromium` or install the corresponding browser.
+
+If you want an individual test to request a specific browser regardless of the CLI default, tests can parametrize the `browser_name` fixture indirectly. Example (already used by `tests/test_sauce_login.py`):
+
+```python
+import pytest
+
+@pytest.mark.parametrize("browser_name", ["chrome"], indirect=True)
+def test_sauce_demo_login(page, url):
+    ...
+```
+
+### Recommended local run (PowerShell)
+
+```powershell
+# Activate virtualenv
+.venv\Scripts\Activate.ps1
+
+# Install Python deps
+pip install -r requirements.txt
+
+# Install Playwright browsers
+python -m playwright install
+
+# Run the Sauce demo login test on Chrome
+pytest tests/test_sauce_login.py -q --browser-name=chrome
+```
+
 ## Framework Features
 
 ### Page Object Model
